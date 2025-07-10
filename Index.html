@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>View GForm</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #007BFF;
+      margin-bottom: 20px;
+    }
+
+    iframe {
+      width: 100%;
+      max-width: 768px;
+      height: 80vh;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .loading {
+      font-size: 1.2em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Formulir Online</h1>
+  <div id="formContainer">
+    <p class="loading">Memuat formulir...</p>
+  </div>
+
+  <script>
+    // Ambil data JSON berisi URL GForm
+    fetch('gform.json')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('formContainer');
+        container.innerHTML = ''; // Bersihkan loading
+
+        const iframe = document.createElement('iframe');
+        iframe.src = data.url;
+        container.appendChild(iframe);
+      })
+      .catch(error => {
+        document.getElementById('formContainer').innerHTML = "<p style='color:red;'>Gagal memuat formulir.</p>";
+        console.error("Error loading JSON:", error);
+      });
+  </script>
+</body>
+</html>
