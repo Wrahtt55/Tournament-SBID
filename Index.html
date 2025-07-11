@@ -30,60 +30,48 @@
     }
 
     .bottom-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #ffffff;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-
-    .bottom-bar a {
-      text-decoration: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-weight: bold;
-      color: white;
-      background: #25D366; /* WhatsApp green */
-      transition: background 0.3s ease;
-    }
-
-    .bottom-bar a:hover {
-      background: #1ebe5d;
-    }
-
-    .admin-info {
-      position: fixed;
-      bottom: 0;
-      right: 10px;
-      width: 100%;
-      background: #ffffff;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-
-    .admin-info a {
-    text-decoration: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-weight: bold;
-      color: white;
-      background: #25D366; /* WhatsApp green */
-      transition: background 0.3s ease;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between; /* kiri & kanan */
+  align-items: center;
+  padding: 10px 20px;
+  z-index: 999;
+  box-sizing: border-box;
 }
 
-.admin-info a:hover {
-      background: #1ebe5d;
-    }
+.bottom-bar .left,
+.bottom-bar .right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Tombol Join Grup WA */
+.bottom-bar .left a {
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: white;
+  background: #25D366;
+  transition: background 0.3s ease;
+}
+
+.bottom-bar .left a:hover {
+  background: #1ebe5d;
+}
+
+/* Admin Info di kanan */
+.bottom-bar .right a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #25D366;
+}
   </style>
 </head>
 <body>
@@ -94,9 +82,13 @@
   </div>
 
   <div class="bottom-bar">
+   <div class="left">
     <a href="https://chat.whatsapp.com/GDjbqEaRmA7IuCiUpGSvnJ?mode=r_c" target="_blank">Join Grup WA</a>
+</div>
     <div class="admin-info">
+<div class="right">
     <a href="https://wa.me/6288991734780" target="_blank"">Admin Tour</a>
+</div>
     </div>
   </div>
 
