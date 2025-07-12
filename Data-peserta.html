@@ -1,0 +1,2972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrim Leaderboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e0ac0c;
+            --secondary: #daa50d;
+            --light: #d3ad38;
+            --accent: #a8dadc;
+            --dark: #d17c24;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, , sans-serif;
+        }
+        
+        body {
+            background-color: #e0800c;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-btn:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        #search {
+            padding: 12px 20px;
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        #search:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2);
+        }
+        
+        .group-title {
+            text-align: center;
+            font-size: 2rem;
+            margin: 20px 0;
+            color: var(--secondary);
+            animation: slideDown 0.5s ease;
+        }
+        
+        .group-title.a {
+            color: #3a86ff;
+        }
+        
+        .group-title.b {
+            color: #ff006e;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--secondary);
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .detail-btn {
+            background-color: var(--accent);
+            color: var(--secondary);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .detail-btn:hover {
+            background-color: var(--dark);
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 800px;
+            animation: slideUp 0.4s ease;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+        }
+        
+        .close-btn {
+            font-size: 1.5rem;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: var(--primary);
+        }
+        
+        .point-details {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .point-details th {
+            background-color: var(--dark);
+        }
+        
+        .locked-message {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+        
+        .winners-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .winner-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.5s ease;
+            transition: all 0.3s ease;
+        }
+        
+        .winner-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .winner-card.gold {
+            border-top: 5px solid gold;
+        }
+        
+        .winner-card.silver {
+            border-top: 5px solid silver;
+        }
+        
+        .winner-card.bronze {
+            border-top: 5px solid #cd7f32;
+        }
+        
+        .winner-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .winner-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .winner-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status.winner {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .status.runner-up {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .status.finalist {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .status.top-10 {
+            background-color: #9c27b0;
+            color: white;
+        }
+        
+        .status.top-30 {
+            background-color: #673ab7;
+            color: white;
+        }
+        
+        .status.participant {
+            background-color: #9e9e9e;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 10px;
+            }
+            
+            .winners-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .winner-card {
+                width: 90%;
+                margin-bottom: 20px;
+            }
+        }
+        
+.main-btn {
+    padding: 12px 24px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;  /* Ubah dari top ke bottom */
+    right: 20px;   /* Posisikan di kanan bawah */
+    /* Hapus transform: translate(-50%, -50%) */
+    z-index: 1000; /* Pastikan tombol di atas elemen lain */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2); /* Tambahkan shadow untuk efek melayang */
+}
+
+/* Style Modal yang Diperbarui */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content input,
+.modal-content textarea {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+    border-color: #25D366;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.2);
+}
+
+.modal-content textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.modal-content button[type="submit"] {
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.modal-content button[type="submit"]:hover {
+    background: #128C7E;
+    transform: translateY(-2px);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.close:hover {
+    color: #e74c3c;
+    transform: rotate(90deg);
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tournament BR solo SBID Wave 2</h1>
+            <p>Data Point participant</p>
+        </header>
+        
+        <div class="nav-tabs">
+            <button class="tab-btn active" data-tab="initial">Tabel Awal (120 Peserta)</button>
+            <button class="tab-btn" data-tab="groupA">🅰️ Grup A (60 Peserta)</button>
+            <button class="tab-btn" data-tab="groupB">🅱️ Grup B (60 Peserta)</button>
+            <button class="tab-btn" data-tab="final">Final Top 60</button>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Cari berdasarkan nickname atau id...">
+        </div>
+        
+        <div id="initial-table" class="table-content">
+            <h2 class="group-title">Semua Peserta</h2>
+            <div class="table-container">
+                <table id="initial">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nickname</th>
+                            <th>ID</th>
+                            <th>Poin</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="initial-body">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="groupA-table" class="table-content" style="display: none;">
+            <h2 class="group-title a">🅰️ Grup A</h2>
+            <div class="table-container">
+                <table id="groupA">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nickname</th>
+                            <th>ID</th>
+                            <th>Poin</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="groupA-body">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="groupB-table" class="table-content" style="display: none;">
+            <h2 class="group-title b">🅱️ Grup B</h2>
+            <div class="table-container">
+                <table id="groupB">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nickname</th>
+                            <th>ID</th>
+                            <th>Poin</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="groupB-body">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="final-table" class="table-content" style="display: none;">
+            <div id="winners-display" style="display: none;">
+                <div class="winners-container">
+                    <div class="winner-card gold">
+                        <div class="winner-icon">🏆</div>
+                        <div class="winner-title">JUARA 1</div>
+                        <div class="winner-name" id="winner-1">-</div>
+                    </div>
+                    <div class="winner-card silver">
+                        <div class="winner-icon">🥈</div>
+                        <div class="winner-title">JUARA 2</div>
+                        <div class="winner-name" id="winner-2">-</div>
+                    </div>
+                    <div class="winner-card bronze">
+                        <div class="winner-icon">🥉</div>
+                        <div class="winner-title">JUARA 3</div>
+                        <div class="winner-name" id="winner-3">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="group-title">Final Top 60</h2>
+            <div class="table-container">
+                <div id="locked-message" class="locked-message">
+                    🚫 Leaderboard Final akan terbuka pada 20 Juli 2025 pukul 12:00 WIB
+                </div>
+                <table id="final" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Nickname</th>
+                            <th>ID</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="final-body">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk detail poin -->
+    <div id="point-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Detail Poin: <span id="detail-nickname"></span></h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <table class="point-details">
+                    <thead>
+                        <tr>
+                            <th>M1 PK</th>
+                            <th>M1 KK</th>
+                            <th>M2 PK</th>
+                            <th>M2 KK</th>
+                            <th>M1 PF</th>
+                            <th>M1 KF</th>
+                            <th>M2 PF</th>
+                            <th>M2 KF</th>
+                            <th>Total Poin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="m1-pk">0</td>
+                            <td id="m1-kk">0</td>
+                            <td id="m2-pk">0</td>
+                            <td id="m2-kk">0</td>
+                            <td id="m1-pf">0</td>
+                            <td id="m1-kf">0</td>
+                            <td id="m2-pf">0</td>
+                            <td id="m2-kf">0</td>
+                            <td id="total-points">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<div id="submissionModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>📝 Form Pengajuan</h2>
+        <form id="waForm">
+            <input type="text" placeholder="Nickname (Contoh: Player123)" required>
+            <input type="text" placeholder="ID (Contoh: 123456789)" required>
+            <textarea placeholder="Alasan pengajuan (Jelaskan secara detail)" required></textarea>
+            <button type="submit">
+                <i class="fab fa-whatsapp"></i> Kirim via WhatsApp
+            </button>
+        </form>
+    </div>
+</div>
+
+    
+    <script>
+        // Data JSON langsung dalam file HTML
+        const tournamentJsonData = {
+            "tabelAwal": [
+  {
+    "no": 1,
+    "nickname": "TAxToxcesEra",
+    "id": "313292288254",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 2,
+    "nickname": "IzumyTzy.",
+    "id": "586017507165",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 3,
+    "nickname": "GRACEE. 王",
+    "id": "588160831710",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 4,
+    "nickname": "[CB]-ARTHUR",
+    "id": "586027589349",
+    "group": "A",
+    "points": {
+      "M1_PK": 8,
+      "M1_KK": 4,
+      "M2_PK": 32,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 46
+    }
+  },
+  {
+    "no": 5,
+    "nickname": "KIYUUXLUNA",
+    "id": "586025554168",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 6,
+    "nickname": "Leloyx",
+    "id": "588173142901",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 1,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 3
+    }
+  },
+  {
+    "no": 7,
+    "nickname": "NgF〆X𝔦mm",
+    "id": "313294982450",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 8,
+    "nickname": "{BSK}<im",
+    "id": "310062188910",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 9,
+    "nickname": "NKN・Kaiper𝕄𝕂",
+    "id": "586014740572",
+    "group": "A",
+    "points": {
+      "M1_PK": 5,
+      "M1_KK": 2,
+      "M2_PK": 33,
+      "M2_KK": 6,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 46
+    }
+  },
+  {
+    "no": 10,
+    "nickname": "Lexxyce000Jx",
+    "id": "586021629812",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 11,
+    "nickname": "Srrvyyy",
+    "id": "313289493256",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 31,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 31
+    }
+  },
+  {
+    "no": 12,
+    "nickname": "NKN • Arin11",
+    "id": "310068950369",
+    "group": "A",
+    "points": {
+      "M1_PK": 47,
+      "M1_KK": 14,
+      "M2_PK": 46,
+      "M2_KK": 8,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 115
+    }
+  },
+  {
+    "no": 13,
+    "nickname": "9Pm|Syezuu魂",
+    "id": "586023478649",
+    "group": "A",
+    "points": {
+      "M1_PK": 10,
+      "M1_KK": 0,
+      "M2_PK": 42,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 52
+    }
+  },
+  {
+    "no": 14,
+    "nickname": "NKN・ZERO",
+    "id": "586018904359",
+    "group": "A",
+    "points": {
+      "M1_PK": 3,
+      "M1_KK": 0,
+      "M2_PK": 2,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 7
+    }
+  },
+  {
+    "no": 15,
+    "nickname": "≠Vidzz`",
+    "id": "586024659512",
+    "group": "A",
+    "points": {
+      "M1_PK": 31,
+      "M1_KK": 0,
+      "M2_PK": 45,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 78
+    }
+  },
+  {
+    "no": 16,
+    "nickname": "ALSTARx•A7",
+    "id": "313288459297",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 17,
+    "nickname": "F7`DazaiACY",
+    "id": "586018017715",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 18,
+    "nickname": "Cmen",
+    "id": "313289343585",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 19,
+    "nickname": "BotakLolot",
+    "id": "586015353778",
+    "group": "A",
+    "points": {
+      "M1_PK": 50,
+      "M1_KK": 30,
+      "M2_PK": 50,
+      "M2_KK": 38,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 168
+    }
+  },
+  {
+    "no": 20,
+    "nickname": "louvreeNOPE7",
+    "id": "310075137507",
+    "group": "A",
+    "points": {
+      "M1_PK": 43,
+      "M1_KK": 16,
+      "M2_PK": 8,
+      "M2_KK": 8,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 75
+    }
+  },
+  {
+    "no": 21,
+    "nickname": "LozzyBOYY'",
+    "id": "586015773091",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 22,
+    "nickname": "MinDhya",
+    "id": "586017273136",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 23,
+    "nickname": "GGxJᴏɴSɴᴏᴡ",
+    "id": "313295382157",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 24,
+    "nickname": "Shamrock`4V",
+    "id": "586012549245",
+    "group": "A",
+    "points": {
+      "M1_PK": 27,
+      "M1_KK": 18,
+      "M2_PK": 44,
+      "M2_KK": 24,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 113
+    }
+  },
+  {
+    "no": 25,
+    "nickname": "FVE┃Ikram`気",
+    "id": "588171415968",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 26,
+    "nickname": "ＮＳＬ么LIFEZ",
+    "id": "313290004034",
+    "group": "A",
+    "points": {
+      "M1_PK": 45,
+      "M1_KK": 10,
+      "M2_PK": 49,
+      "M2_KK": 14,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 118
+    }
+  },
+  {
+    "no": 27,
+    "nickname": "𖤍VEGA々Ashura",
+    "id": "586027796685",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 2,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 2
+    }
+  },
+  {
+    "no": 28,
+    "nickname": "UN🪦|PutraN2F",
+    "id": "313292799150",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 29,
+    "nickname": "xKingMika69",
+    "id": "586013293996",
+    "group": "A",
+    "points": {
+      "M1_PK": 4,
+      "M1_KK": 34,
+      "M2_PK": 5,
+      "M2_KK": 6,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 49
+    }
+  },
+  {
+    "no": 30,
+    "nickname": "[CB]-REMBO•",
+    "id": "586018106360",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 31,
+    "nickname": "WrapthmMANN",
+    "id": "586026570563",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 32,
+    "nickname": "ᴰᴸ✗Kyuu'4",
+    "id": "586024579455",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 33,
+    "nickname": "PTrAvErLoN.R",
+    "id": "586014118043",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 34,
+    "nickname": "И-HD'乙乇ㄩ丂",
+    "id": "586012907732",
+    "group": "A",
+    "points": {
+      "M1_PK": 4,
+      "M1_KK": 2,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 6
+    }
+  },
+  {
+    "no": 35,
+    "nickname": "BGS|REMBO",
+    "id": "310075843445",
+    "group": "A",
+    "points": {
+      "M1_PK": 2,
+      "M1_KK": 4,
+      "M2_PK": 6,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 12
+    }
+  },
+  {
+    "no": 36,
+    "nickname": "SUGAB`|CORE么",
+    "id": "586020436473",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 37,
+    "nickname": "smd_zitrol",
+    "id": "310059949467",
+    "group": "A",
+    "points": {
+      "M1_PK": 28,
+      "M1_KK": 2,
+      "M2_PK": 7,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 37
+    }
+  },
+  {
+    "no": 38,
+    "nickname": "UN🪦Hans",
+    "id": "586022019220",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 39,
+    "nickname": "xFyuu666",
+    "id": "586023734411",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 4,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 6
+    }
+  },
+  {
+    "no": 40,
+    "nickname": "MANG`𝙔𝙊𝙇𝙊",
+    "id": "313281974034",
+    "group": "A",
+    "points": {
+      "M1_PK": 46,
+      "M1_KK": 6,
+      "M2_PK": 10,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 62
+    }
+  },
+  {
+    "no": 41,
+    "nickname": "O L D S K Y Z Z",
+    "id": "586016606301",
+    "group": "A",
+    "points": {
+      "M1_PK": 32,
+      "M1_KK": 4,
+      "M2_PK": 28,
+      "M2_KK": 6,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 70
+    }
+  },
+  {
+    "no": 42,
+    "nickname": "𝙎𝙢𝙙_𝙖𝙠𝙞𝙡𝙯𝙯",
+    "id": "310060051892",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 1,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 1
+    }
+  },
+  {
+    "no": 43,
+    "nickname": "TF•SLAIDERS",
+    "id": "586022898134",
+    "group": "A",
+    "points": {
+      "M1_PK": 48,
+      "M1_KK": 14,
+      "M2_PK": 30,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 94
+    }
+  },
+  {
+    "no": 44,
+    "nickname": "GGxXeotaek",
+    "id": "588173273560",
+    "group": "A",
+    "points": {
+      "M1_PK": 41,
+      "M1_KK": 6,
+      "M2_PK": 3,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 50
+    }
+  },
+  {
+    "no": 45,
+    "nickname": "@KAPTEN(⚡️)",
+    "id": "588168380853",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 46,
+    "nickname": "KIRI_KANAN",
+    "id": "588158958402",
+    "group": "A",
+    "points": {
+      "M1_PK": 30,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 30
+    }
+  },
+  {
+    "no": 47,
+    "nickname": "Evaga|×",
+    "id": "586021662382",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 48,
+    "nickname": "空|something",
+    "id": "586018873206",
+    "group": "A",
+    "points": {
+      "M1_PK": 9,
+      "M1_KK": 4,
+      "M2_PK": 41,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 54
+    }
+  },
+  {
+    "no": 49,
+    "nickname": "PeLikk'VG",
+    "id": "586011810269",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 50,
+    "nickname": "𝕽𝕴𝕶𝕶𝖅𝕬",
+    "id": "588168393170",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 51,
+    "nickname": "-Xwan§+",
+    "id": "584945683366",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 52,
+    "nickname": "JUSTKEN'NZ",
+    "id": "586012974495",
+    "group": "A",
+    "points": {
+      "M1_PK": 29,
+      "M1_KK": 2,
+      "M2_PK": 27,
+      "M2_KK": 4,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 62
+    }
+  },
+  {
+    "no": 53,
+    "nickname": "Ns'Kzyy7",
+    "id": "586018796449",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 54,
+    "nickname": "Naxy👑",
+    "id": "586019826509",
+    "group": "A",
+    "points": {
+      "M1_PK": 35,
+      "M1_KK": 4,
+      "M2_PK": 34,
+      "M2_KK": 4,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 77
+    }
+  },
+  {
+    "no": 55,
+    "nickname": "GGxGkmkn",
+    "id": "586020963706",
+    "group": "A",
+    "points": {
+      "M1_PK": 26,
+      "M1_KK": 6,
+      "M2_PK": 29,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 61
+    }
+  },
+  {
+    "no": 56,
+    "nickname": "GGxkuroYuuki",
+    "id": "586024423918",
+    "group": "A",
+    "points": {
+      "M1_PK": 44,
+      "M1_KK": 10,
+      "M2_PK": 48,
+      "M2_KK": 8,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 110
+    }
+  },
+  {
+    "no": 57,
+    "nickname": "APR.ZeN°VORD",
+    "id": "586025645110",
+    "group": "A",
+    "points": {
+      "M1_PK": 49,
+      "M1_KK": 8,
+      "M2_PK": 8,
+      "M2_KK": 6,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 71
+    }
+  },
+  {
+    "no": 58,
+    "nickname": "Shinzo 秋",
+    "id": "586021008828",
+    "group": "A",
+    "points": {
+      "M1_PK": 42,
+      "M1_KK": 0,
+      "M2_PK": 9,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 53
+    }
+  },
+  {
+    "no": 59,
+    "nickname": "SNG Leadalee",
+    "id": "313296589853",
+    "group": "A",
+    "points": {
+      "M1_PK": 6,
+      "M1_KK": 0,
+      "M2_PK": 43,
+      "M2_KK": 14,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 63
+    }
+  },
+  {
+    "no": 60,
+    "nickname": "PE丨Davidd`3D",
+    "id": "313293963137",
+    "group": "A",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+    {
+    "no": 61,
+    "nickname": ".Lucy1Z",
+    "id": "588170877897",
+    "group": "B",
+    "points": {
+      "M1_PK": 11,
+      "M1_KK": 4,
+      "M2_PK": 41,
+      "M2_KK": 4,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 62,
+    "nickname": "Noobiest",
+    "id": "588159584632",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 63,
+    "nickname": "🅰🆈🆈🅸🅲🅷🅸",
+    "id": "586018355377",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+    {
+    "no": 64,
+    "nickname": "Ngf MZ921",
+    "id": "586020624354",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 9,
+      "M2_PK": 9,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 65,
+    "nickname": "𝘼𝙧𝙖𝙢公|•𝘼𝙎",
+    "id": "586024715556",
+    "group": "B",
+    "points": {
+      "M1_PK": 47,
+      "M1_KK": 10,
+      "M2_PK": 32,
+      "M2_KK": 12,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 66,
+    "nickname": "Zoyy 和AS",
+    "id": "586024137628",
+    "group": "B",
+    "points": {
+      "M1_PK": 35,
+      "M1_KK": 7,
+      "M2_PK": 10,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 67,
+    "nickname": "AluDous",
+    "id": "586023230363",
+    "group": "B",
+    "points": {
+      "M1_PK": 49,
+      "M1_KK": 19,
+      "M2_PK": 29,
+      "M2_KK": 10,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 68,
+    "nickname": "—backspace",
+    "id": "313289480426",
+    "group": "B",
+    "points": {
+      "M1_PK": 5,
+      "M1_KK": 0,
+      "M2_PK": 50,
+      "M2_KK": 16,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 69,
+    "nickname": "Ns'Greezyy7",
+    "id": "586017013711",
+    "group": "B",
+    "points": {
+      "M1_PK": 50,
+      "M1_KK": 42,
+      "M2_PK": 48,
+      "M2_KK": 39,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 70,
+    "nickname": "DIS | Avenged",
+    "id": "586018105728",
+    "group": "B",
+    "points": {
+      "M1_PK": 29,
+      "M1_KK": 12,
+      "M2_PK": 15,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 71,
+    "nickname": "AGx•Sanzz!!",
+    "id": "310067559703",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 72,
+    "nickname": "—Fuú😈",
+    "id": "586024092154",
+    "group": "B",
+    "points": {
+      "M1_PK": 44,
+      "M1_KK": 16,
+      "M2_PK": 45,
+      "M2_KK": 7,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 73,
+    "nickname": "𝑻𝑭•zoe`柱'8̷̷",
+    "id": "586024657328",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 74,
+    "nickname": "FromU2Kyears",
+    "id": "586024468180",
+    "group": "B",
+    "points": {
+      "M1_PK": 28,
+      "M1_KK": 12,
+      "M2_PK": 27,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 75,
+    "nickname": "Dragon",
+    "id": "588166515016",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 76,
+    "nickname": "EXO•Batagor😹",
+    "id": "586018145024",
+    "group": "B",
+    "points": {
+      "M1_PK": 10,
+      "M1_KK": 0,
+      "M2_PK": 30,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 77,
+    "nickname": "𝐄𝐗𝐎• Junki3s🤒",
+    "id": "586021152843",
+    "group": "B",
+    "points": {
+      "M1_PK": 2,
+      "M1_KK": 2,
+      "M2_PK": 3,
+      "M2_KK": 10,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 78,
+    "nickname": "HD`ReyZhex影",
+    "id": "586027452736",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 79,
+    "nickname": "Oline`iTOS",
+    "id": "586011583070",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 6,
+      "M2_KK": 10,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 80,
+    "nickname": "zunshín`iNC",
+    "id": "313288182441",
+    "group": "B",
+    "points": {
+      "M1_PK": 31,
+      "M1_KK": 14,
+      "M2_PK": 35,
+      "M2_KK": 11,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 81,
+    "nickname": "%REDBHUL%",
+    "id": "586025579995",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 82,
+    "nickname": "ASGメZIIEXX",
+    "id": "310063196488",
+    "group": "B",
+    "points": {
+      "M1_PK": 7,
+      "M1_KK": 0,
+      "M2_PK": 27,
+      "M2_KK": 6,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 83,
+    "nickname": "колтоI",
+    "id": "310060359165",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 84,
+    "nickname": "K千几乙ㄖシ",
+    "id": "310068285731",
+    "group": "B",
+    "points": {
+      "M1_PK": 33,
+      "M1_KK": 8,
+      "M2_PK": 44,
+      "M2_KK": 16,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 85,
+    "nickname": "LYNX💢",
+    "id": "586021764693",
+    "group": "B",
+    "points": {
+      "M1_PK": 42,
+      "M1_KK": 4,
+      "M2_PK": 42,
+      "M2_KK": 9,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 86,
+    "nickname": "CringePara😔",
+    "id": "313281217369",
+    "group": "B",
+    "points": {
+      "M1_PK": 3,
+      "M1_KK": 4,
+      "M2_PK": 42,
+      "M2_KK": 16,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 87,
+    "nickname": "xkyriii.",
+    "id": "313284921335",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 88,
+    "nickname": "Zall武",
+    "id": "310061619679",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 89,
+    "nickname": "山田•ra",
+    "id": "586022181390",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 27,
+      "M2_KK": 7,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 90,
+    "nickname": "꧁ᴍᴅ᭄✿𝕯𝖗𝖆𝖌𝖔𝖓✿",
+    "id": "586014162792",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 91,
+    "nickname": "NS'Kanak¹",
+    "id": "313282174209",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 92,
+    "nickname": "ETHR•RAFIF√™",
+    "id": "588167226637",
+    "group": "B",
+    "points": {
+      "M1_PK": 26,
+      "M1_KK": 8,
+      "M2_PK": 43,
+      "M2_KK": 7,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 93,
+    "nickname": "Aizen★",
+    "id": "586013774130",
+    "group": "B",
+    "points": {
+      "M1_PK": 43,
+      "M1_KK": 8,
+      "M2_PK": 28,
+      "M2_KK": 7,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 94,
+    "nickname": "IO_huruf",
+    "id": "310060110312",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 95,
+    "nickname": "xMyuu666",
+    "id": "586022322598",
+    "group": "B",
+    "points": {
+      "M1_PK": 41,
+      "M1_KK": 12,
+      "M2_PK": 7,
+      "M2_KK": 5,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 96,
+    "nickname": "BLACK8`YOLO",
+    "id": "313288015240",
+    "group": "B",
+    "points": {
+      "M1_PK": 46,
+      "M1_KK": 18,
+      "M2_PK": 44,
+      "M2_KK": 19,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 97,
+    "nickname": "*CHIYUN*",
+    "id": "310060550943",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 98,
+    "nickname": "ETR-𝐋𝐮𝐜𝐢𝐟𝐞𝐫𖣂",
+    "id": "586012439996",
+    "group": "B",
+    "points": {
+      "M1_PK": 7,
+      "M1_KK": 8,
+      "M2_PK": 10,
+      "M2_KK": 11,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 99,
+    "nickname": "𝟒𝐀𝐌•Toxces4U",
+    "id": "310065331115",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 100,
+    "nickname": "Wann|•AS",
+    "id": "310072641920",
+    "group": "B",
+    "points": {
+      "M1_PK": 4,
+      "M1_KK": 2,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 101,
+    "nickname": "Liix公|•AS",
+    "id": "588162495992",
+    "group": "B",
+    "points": {
+      "M1_PK": 32,
+      "M1_KK": 4,
+      "M2_PK": 9,
+      "M2_KK": 16,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 102,
+    "nickname": "LingzBOYY",
+    "id": "588168054227",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 103,
+    "nickname": "R A F I C Ғ",
+    "id": "588169437686",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 104,
+    "nickname": "Bery",
+    "id": "586012674146",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 105,
+    "nickname": "Snow,",
+    "id": "310065783046",
+    "group": "B",
+    "points": {
+      "M1_PK": 27,
+      "M1_KK": 0,
+      "M2_PK": 8,
+      "M2_KK": 7,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 106,
+    "nickname": "Kangsampah1",
+    "id": "586023259275",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 107,
+    "nickname": "TT*Eshees.s*",
+    "id": "586015379741",
+    "group": "B",
+    "points": {
+      "M1_PK": 45,
+      "M1_KK": 12,
+      "M2_PK": 34,
+      "M2_KK": 13,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 108,
+    "nickname": "PE | Angel'3D",
+    "id": "586017800837",
+    "group": "B",
+    "points": {
+      "M1_PK": 48,
+      "M1_KK": 6,
+      "M2_PK": 33,
+      "M2_KK": 9,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 109,
+    "nickname": "EL•Xyraww",
+    "id": "586022926828",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 110,
+    "nickname": "A⛧Endercraft",
+    "id": "586023231360",
+    "group": "B",
+    "points": {
+      "M1_PK": 30,
+      "M1_KK": 16,
+      "M2_PK": 4,
+      "M2_KK": 12,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 111,
+    "nickname": "dreamocell",
+    "id": "313282549975",
+    "group": "B",
+    "points": {
+      "M1_PK": 8,
+      "M1_KK": 0,
+      "M2_PK": 46,
+      "M2_KK": 5,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 112,
+    "nickname": "Radjaka11",
+    "id": "586023776544",
+    "group": "B",
+    "points": {
+      "M1_PK": 10,
+      "M1_KK": 14,
+      "M2_PK": 7,
+      "M2_KK": 2,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 113,
+    "nickname": "SIJALU|OC",
+    "id": "586011479839",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 114,
+    "nickname": "FLOW•javv☠️",
+    "id": "588163584092",
+    "group": "B",
+    "points": {
+      "M1_PK": 1,
+      "M1_KK": 2,
+      "M2_PK": 31,
+      "M2_KK": 7,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 115,
+    "nickname": "NSL BitzROAD",
+    "id": "588164122938",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 116,
+    "nickname": "Ｋａｋｓｓ＇ＳＰＬ７",
+    "id": "588172716410",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 117,
+    "nickname": "sazms",
+    "id": "586022629198",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 118,
+    "nickname": "B4rtholomew",
+    "id": "313282767074",
+    "group": "B",
+    "points": {
+      "M1_PK": 33,
+      "M1_KK": 10,
+      "M2_PK": 15,
+      "M2_KK": 4,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 119,
+    "nickname": "BLISSMAN",
+    "id": "588166165335",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  },
+  {
+    "no": 120,
+    "nickname": "⪼[𝙿x]Luxa夜",
+    "id": "586027207860",
+    "group": "B",
+    "points": {
+      "M1_PK": 0,
+      "M1_KK": 0,
+      "M2_PK": 0,
+      "M2_KK": 0,
+      "M1_PF": 0,
+      "M1_KF": 0,
+      "M2_PF": 0,
+      "M2_KF": 0,
+      "total": 0
+    }
+  }
+            ]
+        };
+
+// Pindahkan semua kode JavaScript ke bagian ini
+document.addEventListener('DOMContentLoaded', function() {
+    // Tournament Data
+    const tournamentData = {
+        tabelAwal: [],
+        grupA: [],
+        grupB: [],
+        finalTop60: []
+    };
+
+    // Helper Functions
+    function getStatusByRank(rank) {
+        if (rank === 1) return 'winner';
+        if (rank === 2) return 'second';
+        if (rank === 3) return 'finalist';
+        if (rank <= 10) return 'top-10';
+        if (rank <= 30) return 'top-30';
+        return 'participant';
+    }
+
+    function calculateTotalPoints(participant) {
+        let total = 0;
+        for (const key in participant.points) {
+            if (key !== 'total' && typeof participant.points[key] === 'number') {
+                total += participant.points[key];
+            }
+        }
+        participant.points.total = total;
+        return participant;
+    }
+
+    // Main Functions
+    function splitIntoGroups() {
+        tournamentData.grupA = tournamentData.tabelAwal
+            .filter(p => p.group === 'A')
+            .slice(0, 60)
+            .map(calculateTotalPoints);
+        
+        tournamentData.grupB = tournamentData.tabelAwal
+            .filter(p => p.group === 'B')
+            .slice(0, 60)
+            .map(calculateTotalPoints);
+    }
+
+    function prepareFinalTop60() {
+        const allParticipants = [...tournamentData.tabelAwal].map(calculateTotalPoints);
+        allParticipants.sort((a, b) => b.points.total - a.points.total);
+        
+        tournamentData.finalTop60 = allParticipants.slice(0, 60).map((p, index) => ({
+            ...p,
+            rank: index + 1,
+            status: getStatusByRank(index + 1)
+        }));
+    }
+
+    function populateTable(tableId, data) {
+        const tableBody = document.getElementById(tableId);
+        tableBody.innerHTML = '';
+        
+        data.forEach(participant => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${participant.no}</td>
+                <td>${participant.nickname}</td>
+                <td>${participant.id}</td>
+                <td>${participant.points.total}</td>
+                <td><button class="detail-btn" data-id="${participant.id}">🔘 Detail</button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+        document.querySelectorAll(`#${tableId} .detail-btn`).forEach(btn => {
+            btn.addEventListener('click', () => showPointDetails(btn.dataset.id));
+        });
+    }
+
+    function populateFinalTable() {
+        const tableBody = document.getElementById('final-body');
+        tableBody.innerHTML = '';
+        
+        const winnersDisplay = document.getElementById('winners-display');
+        if (tournamentData.finalTop60.length >= 3) {
+            document.getElementById('winner-1').textContent = tournamentData.finalTop60[0].nickname;
+            document.getElementById('winner-2').textContent = tournamentData.finalTop60[1].nickname;
+            document.getElementById('winner-3').textContent = tournamentData.finalTop60[2].nickname;
+            winnersDisplay.style.display = 'block';
+        }
+        
+        tournamentData.finalTop60.forEach(participant => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${participant.rank}</td>
+                <td>${participant.nickname}</td>
+                <td>${participant.id}</td>
+                <td><span class="status ${participant.status}">${participant.status.replace('-', ' ')}</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function showPointDetails(participantId) {
+        const modal = document.getElementById('point-modal');
+        let participant = tournamentData.tabelAwal.find(p => p.id === participantId) ||
+                        tournamentData.grupA.find(p => p.id === participantId) ||
+                        tournamentData.grupB.find(p => p.id === participantId) ||
+                        tournamentData.finalTop60.find(p => p.id === participantId);
+        
+        if (participant) {
+            document.getElementById('detail-nickname').textContent = participant.nickname;
+            document.getElementById('m1-pk').textContent = participant.points.M1_PK;
+            document.getElementById('m1-kk').textContent = participant.points.M1_KK;
+            document.getElementById('m2-pk').textContent = participant.points.M2_PK;
+            document.getElementById('m2-kk').textContent = participant.points.M2_KK;
+            document.getElementById('m1-pf').textContent = participant.points.M1_PF;
+            document.getElementById('m1-kf').textContent = participant.points.M1_KF;
+            document.getElementById('m2-pf').textContent = participant.points.M2_PF;
+            document.getElementById('m2-kf').textContent = participant.points.M2_KF;
+            document.getElementById('total-points').textContent = participant.points.total;
+            
+            modal.style.display = 'block';
+        }
+    }
+
+    function checkFinalUnlock() {
+        const lockedMessage = document.getElementById('locked-message');
+        const finalTable = document.getElementById('final');
+        const unlockDate = new Date('2025-07-20T10:00:00Z'); // 06:00 WIB (UTC+7)
+        
+        if (new Date() >= unlockDate) {
+            lockedMessage.style.display = 'none';
+            finalTable.style.display = 'table';
+            prepareFinalTop60();
+            populateFinalTable();
+        } else {
+            setTimeout(checkFinalUnlock, 60000);
+        }
+    }
+
+    // Setup Event Listeners
+    function setupEventListeners() {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const searchInput = document.getElementById('search');
+        const pointModal = document.getElementById('point-modal');
+        const pointModalClose = document.querySelector('.close-btn');
+        const submissionModal = document.getElementById('submissionModal');
+        const submissionModalClose = document.querySelector('.close');
+        
+        // Tab buttons
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                document.querySelectorAll('.table-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                document.getElementById(`${button.dataset.tab}-table`).style.display = 'block';
+            });
+        });
+        
+// Ganti event listener search yang ada dengan ini:
+document.getElementById('search').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const activeTable = document.querySelector('.table-content:not([style*="none"])');
+    
+    if (activeTable) {
+        const tableBody = activeTable.querySelector('tbody');
+        const rows = tableBody.querySelectorAll('tr');
+        
+        rows.forEach(row => {
+            const nickname = row.cells[1].textContent.toLowerCase();
+            const id = row.cells[2].textContent.toLowerCase();
+            row.style.display = (nickname.includes(searchTerm) || id.includes(searchTerm)) ? '' : 'none';
+        });
+    }
+});
+        
+        // Point modal close
+        pointModalClose.addEventListener('click', () => {
+            pointModal.style.display = 'none';
+        });
+        
+        // Submission modal
+        document.getElementById('openModal').addEventListener('click', function() {
+            submissionModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+        
+        submissionModalClose.addEventListener('click', function() {
+            submissionModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === pointModal) {
+                pointModal.style.display = 'none';
+            }
+            if (e.target === submissionModal) {
+                submissionModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+// Form submission
+document.getElementById('waForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const inputs = this.querySelectorAll('input, textarea');
+    const message = `*Form Pengajuan Tournament*\n\n` +
+                   `*Nickname*: ${inputs[0].value}\n` +
+                   `*ID*: ${inputs[1].value}\n` +
+                   `*Alasan*: ${inputs[2].value}\n\n` +
+                   `_Dikirim melalui website leaderboard_`;
+    
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/6288991734780?text=${encodedMessage}`, '_blank');
+    
+    // Reset form and close modal
+    this.reset();
+    submissionModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+});
+    }
+
+    // Initialize
+    function init() {
+        // Load data from embedded JSON
+        tournamentData.tabelAwal = tournamentJsonData.tabelAwal;
+        
+        splitIntoGroups();
+        prepareFinalTop60();
+        populateTable('initial-body', tournamentData.tabelAwal);
+        populateTable('groupA-body', tournamentData.grupA);
+        populateTable('groupB-body', tournamentData.grupB);
+        setupEventListeners();
+        checkFinalUnlock();
+        
+        // Deteksi desktop
+        if (window.innerWidth > 768 && !navigator.userAgent.match(/Mobile|Android|iPhone/i)) {
+            alert("⚠️ Hanya tersedia untuk versi desktop");
+        }
+    }
+
+    // Start the application
+    init();
+});
+    </script>
+    <button id="openModal" class="main-btn">
+    <i class="fas fa-edit"></i> Form Pengajuan
+</button>
+</body>
+</html>
